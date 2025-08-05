@@ -5,7 +5,6 @@ from __future__ import annotations
 import base64
 from collections.abc import AsyncGenerator, Callable
 import json
-from mimetypes import guess_file_type
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Literal, cast
 
