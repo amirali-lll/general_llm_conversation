@@ -9,6 +9,7 @@ from mimetypes import guess_file_type
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Literal, cast
 
+import mimetypes
 import openai
 from openai._streaming import AsyncStream
 from openai.types.responses import (
@@ -436,7 +437,7 @@ async def async_prepare_files_for_prompt(
             if not file_path.exists():
                 raise HomeAssistantError(f"`{file_path}` does not exist")
 
-            mime_type, _ = guess_file_type(file_path)
+            mime_type, _ = mimetypes.guess_type(str(file_path))
 
             if not mime_type or not mime_type.startswith(("image/", "application/pdf")):
                 raise HomeAssistantError(
