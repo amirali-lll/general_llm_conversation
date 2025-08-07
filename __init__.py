@@ -1,4 +1,4 @@
-"""The General LLM Conversation integration."""
+"""The OpenAI Conversation integration."""
 
 from __future__ import annotations
 
@@ -16,7 +16,7 @@ from openai.types.responses import (
 )
 import voluptuous as vol
 
-from homeassistant.config_entries import ConfigEntry
+from homeassistant.config_entries import ConfigEntry, ConfigSubentry
 from homeassistant.const import CONF_API_KEY, Platform
 from homeassistant.core import (
     HomeAssistant,
@@ -46,7 +46,6 @@ from .const import (
     CONF_REASONING_EFFORT,
     CONF_TEMPERATURE,
     CONF_TOP_P,
-    CONF_BASE_URL,
     DEFAULT_AI_TASK_NAME,
     DEFAULT_NAME,
     DOMAIN,
@@ -63,10 +62,10 @@ from .entity import async_prepare_files_for_prompt
 SERVICE_GENERATE_IMAGE = "generate_image"
 SERVICE_GENERATE_CONTENT = "generate_content"
 
-PLATFORMS = (Platform.CONVERSATION,)
+PLATFORMS = (Platform.AI_TASK, Platform.CONVERSATION)
 CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
 
-type GeneralLLMConfigEntry = ConfigEntry[openai.AsyncClient]
+type OpenAIConfigEntry = ConfigEntry[openai.AsyncClient]
 
 
 async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
@@ -233,11 +232,10 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
     return True
 
 
-async def async_setup_entry(hass: HomeAssistant, entry: GeneralLLMConfigEntry) -> bool:
-    """Set up General LLM Conversation from a config entry."""
+async def async_setup_entry(hass: HomeAssistant, entry: OpenAIConfigEntry) -> bool:
+    """Set up OpenAI Conversation from a config entry."""
     client = openai.AsyncOpenAI(
         api_key=entry.data[CONF_API_KEY],
-        base_url=entry.data.get(CONF_BASE_URL, ""),
         http_client=get_async_client(hass),
     )
 

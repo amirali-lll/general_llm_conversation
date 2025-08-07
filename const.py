@@ -1,17 +1,16 @@
-"""Constants for the General LLM Conversation integration."""
+"""Constants for the OpenAI Conversation integration."""
 
 import logging
 
 from homeassistant.const import CONF_LLM_HASS_API
 from homeassistant.helpers import llm
 
-DOMAIN = "general_llm_conversation"
+DOMAIN = "openai_conversation"
 LOGGER: logging.Logger = logging.getLogger(__package__)
 
-DEFAULT_CONVERSATION_NAME = "General LLM Conversation"
-DEFAULT_AI_TASK_NAME = "General LLM AI Task"
-DEFAULT_NAME = "General LLM Conversation"
-CONF_BASE_URL = "base_url"
+DEFAULT_CONVERSATION_NAME = "OpenAI Conversation"
+DEFAULT_AI_TASK_NAME = "OpenAI AI Task"
+DEFAULT_NAME = "OpenAI Conversation"
 
 CONF_CHAT_MODEL = "chat_model"
 CONF_CODE_INTERPRETER = "code_interpreter"
@@ -63,9 +62,7 @@ RECOMMENDED_CONVERSATION_OPTIONS = {
     CONF_RECOMMENDED: True,
     CONF_LLM_HASS_API: [llm.LLM_API_ASSIST],
     CONF_PROMPT: llm.DEFAULT_INSTRUCTIONS_PROMPT,
-    CONF_BASE_URL: "",
 }
 RECOMMENDED_AI_TASK_OPTIONS = {
     CONF_RECOMMENDED: True,
-    CONF_BASE_URL: "",
 }

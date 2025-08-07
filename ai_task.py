@@ -1,4 +1,4 @@
-"""AI Task integration for General LLM Conversation."""
+"""AI Task integration for OpenAI."""
 
 from __future__ import annotations
 
@@ -12,7 +12,7 @@ from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 from homeassistant.util.json import json_loads
 
-from .entity import GeneralLLMBaseEntity
+from .entity import OpenAIBaseLLMEntity
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -28,16 +28,16 @@ async def async_setup_entry(
             continue
 
         async_add_entities(
-            [GeneralLLMTaskEntity(config_entry, subentry)],
+            [OpenAITaskEntity(config_entry, subentry)],
             config_subentry_id=subentry.subentry_id,
         )
 
 
-class GeneralLLMTaskEntity(
+class OpenAITaskEntity(
     ai_task.AITaskEntity,
-    GeneralLLMBaseEntity,
+    OpenAIBaseLLMEntity,
 ):
-    """General LLM AI Task entity."""
+    """OpenAI AI Task entity."""
 
     _attr_supported_features = (
         ai_task.AITaskEntityFeature.GENERATE_DATA
@@ -72,7 +72,7 @@ class GeneralLLMTaskEntity(
                 err,
                 text,
             )
-            raise HomeAssistantError("Error with General LLM structured response") from err
+            raise HomeAssistantError("Error with OpenAI structured response") from err
 
         return ai_task.GenDataTaskResult(
             conversation_id=chat_log.conversation_id,

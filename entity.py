@@ -1,14 +1,14 @@
-"""Base entity for General LLM Conversation."""
+"""Base entity for OpenAI."""
 
 from __future__ import annotations
 
 import base64
 from collections.abc import AsyncGenerator, Callable
 import json
+from mimetypes import guess_file_type
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Literal, cast
 
-import mimetypes
 import openai
 from openai._streaming import AsyncStream
 from openai.types.responses import (
@@ -79,7 +79,7 @@ from .const import (
 )
 
 if TYPE_CHECKING:
-    from . import GeneralLLMConfigEntry
+    from . import OpenAIConfigEntry
 
 
 # Max number of back and forth with the LLM to generate a response
@@ -271,13 +271,13 @@ async def _transform_stream(
             raise HomeAssistantError(f"OpenAI response error: {event.message}")
 
 
-class GeneralLLMBaseEntity(Entity):
-    """General LLM conversation agent."""
+class OpenAIBaseLLMEntity(Entity):
+    """OpenAI conversation agent."""
 
     _attr_has_entity_name = True
     _attr_name = None
 
-    def __init__(self, entry: GeneralLLMConfigEntry, subentry: ConfigSubentry) -> None:
+    def __init__(self, entry: OpenAIConfigEntry, subentry: ConfigSubentry) -> None:
         """Initialize the entity."""
         self.entry = entry
         self.subentry = subentry
@@ -285,7 +285,7 @@ class GeneralLLMBaseEntity(Entity):
         self._attr_device_info = dr.DeviceInfo(
             identifiers={(DOMAIN, subentry.subentry_id)},
             name=subentry.title,
-            manufacturer="General LLM",
+            manufacturer="OpenAI",
             model=subentry.data.get(CONF_CHAT_MODEL, RECOMMENDED_CHAT_MODEL),
             entry_type=dr.DeviceEntryType.SERVICE,
         )
@@ -436,7 +436,7 @@ async def async_prepare_files_for_prompt(
             if not file_path.exists():
                 raise HomeAssistantError(f"`{file_path}` does not exist")
 
-            mime_type, _ = mimetypes.guess_type(str(file_path))
+            mime_type, _ = guess_file_type(file_path)
 
             if not mime_type or not mime_type.startswith(("image/", "application/pdf")):
                 raise HomeAssistantError(

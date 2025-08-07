@@ -2,23 +2,22 @@
 
 from typing import Literal
 
-
 from homeassistant.components import conversation
 from homeassistant.config_entries import ConfigSubentry
 from homeassistant.const import CONF_LLM_HASS_API, MATCH_ALL
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
-from . import GeneralLLMConfigEntry
+from . import OpenAIConfigEntry
 from .const import CONF_PROMPT, DOMAIN
-from .entity import GeneralLLMBaseEntity
+from .entity import OpenAIBaseLLMEntity
 
 # Max number of back and forth with the LLM to generate a response
 
 
 async def async_setup_entry(
     hass: HomeAssistant,
-    config_entry: GeneralLLMConfigEntry,
+    config_entry: OpenAIConfigEntry,
     async_add_entities: AddConfigEntryEntitiesCallback,
 ) -> None:
     """Set up conversation entities."""
@@ -27,21 +26,21 @@ async def async_setup_entry(
             continue
 
         async_add_entities(
-            [GeneralLLMConversationEntity(config_entry, subentry)],
+            [OpenAIConversationEntity(config_entry, subentry)],
             config_subentry_id=subentry.subentry_id,
         )
 
 
-class GeneralLLMConversationEntity(
+class OpenAIConversationEntity(
     conversation.ConversationEntity,
     conversation.AbstractConversationAgent,
-    GeneralLLMBaseEntity,
+    OpenAIBaseLLMEntity,
 ):
-    """General LLM conversation agent."""
+    """OpenAI conversation agent."""
 
     _attr_supports_streaming = True
 
-    def __init__(self, entry: GeneralLLMConfigEntry, subentry: ConfigSubentry) -> None:
+    def __init__(self, entry: OpenAIConfigEntry, subentry: ConfigSubentry) -> None:
         """Initialize the agent."""
         super().__init__(entry, subentry)
         if self.subentry.data.get(CONF_LLM_HASS_API):

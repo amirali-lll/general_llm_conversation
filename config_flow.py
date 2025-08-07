@@ -56,7 +56,6 @@ from .const import (
     CONF_WEB_SEARCH_REGION,
     CONF_WEB_SEARCH_TIMEZONE,
     CONF_WEB_SEARCH_USER_LOCATION,
-    CONF_BASE_URL,
     DEFAULT_AI_TASK_NAME,
     DEFAULT_CONVERSATION_NAME,
     DOMAIN,
@@ -80,7 +79,6 @@ _LOGGER = logging.getLogger(__name__)
 STEP_USER_DATA_SCHEMA = vol.Schema(
     {
         vol.Required(CONF_API_KEY): str,
-        vol.Required(CONF_BASE_URL, default=""): str,
     }
 )
 
@@ -96,8 +94,8 @@ async def validate_input(hass: HomeAssistant, data: dict[str, Any]) -> None:
     await hass.async_add_executor_job(client.with_options(timeout=10.0).models.list)
 
 
-class GeneralLLMConfigFlow(ConfigFlow, domain=DOMAIN):
-    """Handle a config flow for General LLM Conversation."""
+class OpenAIConfigFlow(ConfigFlow, domain=DOMAIN):
+    """Handle a config flow for OpenAI Conversation."""
 
     VERSION = 2
     MINOR_VERSION = 3
@@ -124,24 +122,19 @@ class GeneralLLMConfigFlow(ConfigFlow, domain=DOMAIN):
             _LOGGER.exception("Unexpected exception")
             errors["base"] = "unknown"
         else:
-            # Inject base_url into subentries
-            conversation_options = RECOMMENDED_CONVERSATION_OPTIONS.copy()
-            ai_task_options = RECOMMENDED_AI_TASK_OPTIONS.copy()
-            conversation_options[CONF_BASE_URL] = user_input[CONF_BASE_URL]
-            ai_task_options[CONF_BASE_URL] = user_input[CONF_BASE_URL]
             return self.async_create_entry(
-                title="General LLM",
+                title="ChatGPT",
                 data=user_input,
                 subentries=[
                     {
                         "subentry_type": "conversation",
-                        "data": conversation_options,
+                        "data": RECOMMENDED_CONVERSATION_OPTIONS,
                         "title": DEFAULT_CONVERSATION_NAME,
                         "unique_id": None,
                     },
                     {
                         "subentry_type": "ai_task_data",
-                        "data": ai_task_options,
+                        "data": RECOMMENDED_AI_TASK_OPTIONS,
                         "title": DEFAULT_AI_TASK_NAME,
                         "unique_id": None,
                     },
@@ -159,13 +152,13 @@ class GeneralLLMConfigFlow(ConfigFlow, domain=DOMAIN):
     ) -> dict[str, type[ConfigSubentryFlow]]:
         """Return subentries supported by this integration."""
         return {
-            "conversation": GeneralLLMSubentryFlowHandler,
-            "ai_task_data": GeneralLLMSubentryFlowHandler,
+            "conversation": OpenAISubentryFlowHandler,
+            "ai_task_data": OpenAISubentryFlowHandler,
         }
 
 
-class GeneralLLMSubentryFlowHandler(ConfigSubentryFlow):
-    """Flow for managing General LLM subentries."""
+class OpenAISubentryFlowHandler(ConfigSubentryFlow):
+    """Flow for managing OpenAI subentries."""
 
     last_rendered_recommended = False
     options: dict[str, Any]
@@ -222,7 +215,6 @@ class GeneralLLMSubentryFlowHandler(ConfigSubentryFlow):
             else:
                 default_name = DEFAULT_CONVERSATION_NAME
             step_schema[vol.Required(CONF_NAME, default=default_name)] = str
-            step_schema[vol.Required(CONF_BASE_URL, default="")] = str
 
         if self._subentry_type == "conversation":
             step_schema.update(
