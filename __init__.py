@@ -46,6 +46,7 @@ from .const import (
     CONF_REASONING_EFFORT,
     CONF_TEMPERATURE,
     CONF_TOP_P,
+    CONF_BASE_URL,
     DEFAULT_AI_TASK_NAME,
     DEFAULT_NAME,
     DOMAIN,
@@ -237,6 +238,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: OpenAIConfigEntry) -> bo
     client = openai.AsyncOpenAI(
         api_key=entry.data[CONF_API_KEY],
         http_client=get_async_client(hass),
+        base_url=entry.data[CONF_BASE_URL],
     )
 
     # Cache current platform data which gets added to each request (caching done by library)
