@@ -396,7 +396,7 @@ class OpenAIBaseLLMEntity(Entity):
             model_args["input"] = messages
 
             try:
-                result = await client.responses.create(**model_args)
+                result = await client.chat.completions.create(**model_args)
 
                 async for content in chat_log.async_add_delta_content_stream(
                     self.entity_id, _transform_stream(chat_log, result, messages)

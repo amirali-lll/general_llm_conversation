@@ -179,7 +179,7 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
             }
 
         try:
-            response: Response = await client.responses.create(**model_args)
+            response: Response = await client.chat.completions.create(**model_args)
 
         except openai.OpenAIError as err:
             raise HomeAssistantError(f"Error generating content: {err}") from err
