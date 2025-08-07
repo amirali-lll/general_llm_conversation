@@ -1,6 +1,6 @@
 {
-  "domain": "openai_conversation",
-  "name": "OpenAI",
+  "domain": "general_llm_conversation",
+  "name": "General LLM Conversation",
   "after_dependencies": ["assist_pipeline", "intent"],
   "codeowners": ["@balloob"],
   "config_flow": true,

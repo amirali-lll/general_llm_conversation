@@ -1,4 +1,4 @@
-"""The OpenAI Conversation integration."""
+"""The General LLM Conversation integration."""
 
 from __future__ import annotations
 
